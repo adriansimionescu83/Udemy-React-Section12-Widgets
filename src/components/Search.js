@@ -20,9 +20,20 @@ const Search = () => {
     setResults(data.query.search);
 
   };
-  if (term) {
+
+  if (term && !results.length) {
     search();
-  };
+  } else {
+    const timeoutId = setTimeout(() => {
+      if (term) {
+        search();
+      }
+    }, 500);
+    // Cleanup function does not get called right away but the next time the function is rerendered
+    return() => {
+      clearTimeout(timeoutId);
+    };
+  }
 
 
   }, [term]);
@@ -30,6 +41,9 @@ const Search = () => {
   const renderedResults = results.map((result) => {
     return (
       <div key={result.pageid} className="item">
+        <div className="right floated content">
+          <a className="ui button" href={`https://en.wikipedia.org?curid=${result.pageid}`}>Go</a>
+        </div>
         <div className="content">
           <div className="header">
             {result.title}
